@@ -1,9 +1,11 @@
 FROM scratch
 ADD rootfs.tar.gz /
 
-# set version label
+# set version labels
 ARG build_date
 ARG version
+LABEL build_date="${build_date}"
+LABEL version="${version}"
 LABEL maintainer="Nightah"
 
 # set version for s6 overlay
