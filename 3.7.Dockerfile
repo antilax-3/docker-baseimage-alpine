@@ -1,5 +1,5 @@
 FROM scratch
-ADD rootfs.tar.gz /
+ADD 3.7.rootfs.tar.gz /
 
 # set version labels
 ARG build_date
