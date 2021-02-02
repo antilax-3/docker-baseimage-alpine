@@ -1,5 +1,5 @@
 FROM scratch
-ADD 3.10.rootfs.tar.gz /
+ADD 3.13.rootfs.tar.gz /
 
 # set version labels
 ARG build_date
@@ -51,7 +51,7 @@ RUN \
  rm -rf \
 	/tmp/*
 
-# add local files
+# add local files
 COPY root/ /
 
 ENTRYPOINT ["/init"]

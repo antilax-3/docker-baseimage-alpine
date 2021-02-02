@@ -51,7 +51,7 @@ RUN \
  rm -rf \
 	/tmp/*
 
-# add local files
+# add local files
 COPY root/ /
 
 ENTRYPOINT ["/init"]
