@@ -9,7 +9,7 @@ LABEL version="${version}"
 LABEL maintainer="Nightah"
 
 # set version for s6 overlay
-ARG OVERLAY_VERSION="v2.1.0.2"
+ARG OVERLAY_VERSION="v2.2.0.1"
 ARG OVERLAY_ARCH="amd64"
 
 # environment variables
