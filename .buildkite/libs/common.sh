@@ -53,8 +53,7 @@ sanitize_tag() {
 #   BUILD_TAG - the build-scoped tag, e.g. BK12, also used as the version label/build arg
 #   IMAGE     - the fully qualified build-scoped image the test step pulls
 #   TAGS      - the tags pushed for the build context, following authelia/baseimage:
-#                 renovate/*   -> renovate
-#                 local branch -> <branch>
+#                 local branch -> <branch> with unsafe characters replaced, e.g. renovate/alpine-3.x -> renovate-alpine-3.x
 #                 fork PRs     -> PR<number> (Buildkite prefixes fork branch names with owner:)
 #                 master       -> latest, <major>, <series> and <release>, e.g. latest 3 3.24 3.24.1
 #               and always BK<build>
@@ -63,9 +62,7 @@ resolve_image() {
   IMAGE="${REGISTRY}/${DOCKER_REPOSITORY}:${BUILD_TAG}"
   TAGS=""
 
-  if [[ "${BUILDKITE_BRANCH}" =~ ^renovate/ ]]; then
-    TAGS="renovate"
-  elif [[ "${BUILDKITE_BRANCH}" != "master" ]] && [[ ! "${BUILDKITE_BRANCH}" =~ .*:.* ]]; then
+  if [[ "${BUILDKITE_BRANCH}" != "master" ]] && [[ ! "${BUILDKITE_BRANCH}" =~ .*:.* ]]; then
     TAGS="$(sanitize_tag "${BUILDKITE_BRANCH}")"
   elif [[ "${BUILDKITE_BRANCH}" =~ .*:.* ]]; then
     TAGS="PR${BUILDKITE_PULL_REQUEST}"
