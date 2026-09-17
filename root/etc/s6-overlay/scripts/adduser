@@ -18,11 +18,13 @@ cat <<'EOF'
 GID/UID
 --------------------------------------------
 EOF
-echo "
+cat <<EOF
+
 User uid:    $(id -u abc)
 User gid:    $(id -g abc)
 --------------------------------------------
-"
+
+EOF
 
 chown -R abc:abc /app
 chown -R abc:abc /config

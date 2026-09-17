@@ -44,9 +44,6 @@ curl -sSfL -o /tmp/s6-overlay.tar.xz "https://github.com/just-containers/s6-over
 tar -C / -Jpxf /tmp/s6-overlay-noarch.tar.xz
 tar -C / -Jpxf /tmp/s6-overlay.tar.xz
 
-echo "**** patch CVE-2019-5021 ****"
-sed -i -e 's/^root::/root:!:/' /etc/shadow
-
 echo "**** create abc user and make our folders ****"
 groupmod -g 1000 users
 useradd -u 911 -U -d /config -s /bin/false abc
