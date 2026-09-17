@@ -81,12 +81,32 @@ resolve_image() {
 #   PLATFORM_IMAGE  - IMAGE pinned to that platform's manifest digest; tests of different platforms can share a
 #                     Docker daemon, and pulling the multi-platform tag for each would race over the local tag.
 #
+# The pre-command hook exports both, so the command and later hooks reuse them instead of querying the registry again.
+# Registry lookups are retried, as Docker Hub intermittently fails token requests. Returns non-zero if no digest resolves.
+#
 # $1 - the short platform name, e.g. armv7
 resolve_platform_image() {
-  local digest
+  local attempt digest
 
   DOCKER_PLATFORM=$(docker_platform "${1}")
-  digest=$(docker buildx imagetools inspect "${IMAGE}" --format '{{json .Manifest}}' | jq -r --arg platform "${DOCKER_PLATFORM}" \
-    '.manifests[] | select((.platform.os + "/" + .platform.architecture + (if .platform.variant then "/" + .platform.variant else "" end)) == $platform) | .digest')
-  PLATFORM_IMAGE="${IMAGE%:*}@${digest}"
+
+  if [[ "${PLATFORM_IMAGE:-}" == "${IMAGE%:*}@sha256:"* ]]; then
+    return 0
+  fi
+
+  for attempt in 1 2 3 4 5; do
+    digest=$(docker buildx imagetools inspect "${IMAGE}" --format '{{json .Manifest}}' | jq -r --arg platform "${DOCKER_PLATFORM}" \
+      '.manifests[] | select((.platform.os + "/" + .platform.architecture + (if .platform.variant then "/" + .platform.variant else "" end)) == $platform) | .digest')
+
+    if [[ "${digest}" =~ ^sha256:[0-9a-f]{64}$ ]]; then
+      PLATFORM_IMAGE="${IMAGE%:*}@${digest}"
+      return 0
+    fi
+
+    [[ ${attempt} -lt 5 ]] && echo "Unable to resolve the ${DOCKER_PLATFORM} digest of ${IMAGE}, retrying (${attempt}/5)" >&2 && sleep $((attempt * 5))
+  done
+
+  echo "Unable to resolve the ${DOCKER_PLATFORM} digest of ${IMAGE}" >&2
+  PLATFORM_IMAGE=""
+  return 1
 }

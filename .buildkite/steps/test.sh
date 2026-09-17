@@ -5,7 +5,7 @@ set -u
 source "$(dirname "${BASH_SOURCE[0]}")/../libs/common.sh"
 
 resolve_image
-resolve_platform_image "${PLATFORM}"
+resolve_platform_image "${PLATFORM}" || exit 1
 
 case "${PLATFORM}" in
   amd64) ALPINE_ARCH="x86_64"; ELF_MACHINE="62" ;;
