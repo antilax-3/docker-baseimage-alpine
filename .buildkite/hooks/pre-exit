@@ -1,0 +1,13 @@
+#!/usr/bin/env bash
+set +u
+
+# shellcheck source=/dev/null
+source "$(dirname "${BASH_SOURCE[0]}")/../libs/common.sh"
+
+if [[ "${BUILDKITE_LABEL}" =~ ^:test_tube:\ Test\ Image ]]; then
+  resolve_image
+  resolve_platform_image "${PLATFORM}"
+
+  echo "--- :docker: Clean ${PLATFORM_IMAGE}"
+  docker rmi "${PLATFORM_IMAGE}" > /dev/null 2>&1
+fi
