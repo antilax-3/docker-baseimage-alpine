@@ -9,6 +9,7 @@ LABEL version="${version}"
 LABEL maintainer="Nightah"
 
 # set version for s6 overlay
+# renovate: datasource=github-releases depName=just-containers/s6-overlay
 ARG OVERLAY_VERSION="3.2.1.0"
 
 # environment variables
