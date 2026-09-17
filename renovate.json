@@ -6,7 +6,6 @@
     ":semanticCommitTypeAll(build)",
     ":separatePatchReleases"
   ],
-  "branchPrefix": "renovate-",
   "ignorePresets": [
     ":semanticPrefixFixDepsChoreOthers"
   ],
