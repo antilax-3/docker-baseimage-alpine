@@ -10,7 +10,8 @@ fi
 
 if [[ "${BUILDKITE_LABEL}" =~ ^:test_tube:\ Test\ Image ]]; then
   resolve_image
-  resolve_platform_image "${PLATFORM}"
+  resolve_platform_image "${PLATFORM}" || exit 1
+  export DOCKER_PLATFORM PLATFORM_IMAGE
 
   echo "--- :docker: Pulling ${IMAGE} for ${DOCKER_PLATFORM}"
   docker pull --platform "${DOCKER_PLATFORM}" "${PLATFORM_IMAGE}" || exit 1

@@ -23,9 +23,9 @@ for PLATFORM in ${PLATFORMS}; do BUILDPLATFORMS+="$(docker_platform "${PLATFORM}
 
 cat << EOF
 steps:
-  - group: ":alpine: Alpine ${ALPINE_VERSION}"
+  - group: ":alpine: Alpine ${ALPINE_RELEASE}"
     steps:
-      - label: ":docker: Build and Deploy [${ALPINE_VERSION}]"
+      - label: ":docker: Build and Deploy [${ALPINE_RELEASE}]"
         command: "docker build ${BUILDTAGS::-1} --build-arg build_date=\"${BUILD_DATE}\" --build-arg version=\"${BUILD_TAG}\" --label org.opencontainers.image.created=\"${CREATED}\" --label org.opencontainers.image.revision=\"${BUILDKITE_COMMIT}\" --label org.opencontainers.image.source=\"https://github.com/${GITHUB_REPOSITORY}\" --label org.opencontainers.image.version=\"${BUILD_TAG}\" --platform ${BUILDPLATFORMS::-1} --provenance mode=max,reproducible=true --sbom true --builder buildx --progress plain --pull --no-cache --push ."
 EOF
 if master; then
@@ -43,7 +43,7 @@ EOF
 for PLATFORM in ${PLATFORMS}; do
 cat << EOF
 
-      - label: ":test_tube: Test Image [${ALPINE_VERSION}] [${PLATFORM}]"
+      - label: ":test_tube: Test Image [${ALPINE_RELEASE}] [${PLATFORM}]"
         command: ".buildkite/steps/test.sh"
         depends_on:
           - "build"

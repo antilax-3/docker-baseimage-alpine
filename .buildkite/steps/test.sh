@@ -5,7 +5,7 @@ set -u
 source "$(dirname "${BASH_SOURCE[0]}")/../libs/common.sh"
 
 resolve_image
-resolve_platform_image "${PLATFORM}"
+resolve_platform_image "${PLATFORM}" || exit 1
 
 case "${PLATFORM}" in
   amd64) ALPINE_ARCH="x86_64"; ELF_MACHINE="62" ;;
@@ -54,7 +54,7 @@ check "OCI created label is an RFC 3339 timestamp" "valid" \
   "$(docker image inspect -f '{{index .Config.Labels "org.opencontainers.image.created"}}' "${PLATFORM_IMAGE}" | grep -qE '^[0-9]{4}-[0-9]{2}-[0-9]{2}T[0-9]{2}:[0-9]{2}:[0-9]{2}Z$' && echo valid)"
 
 echo "--- :alpine: Base system"
-check "alpine release is ${ALPINE_VERSION}.x" "${ALPINE_VERSION}" "$(run "" "cut -d. -f1,2 /etc/alpine-release")"
+check "alpine release is ${ALPINE_RELEASE}" "${ALPINE_RELEASE}" "$(run "" "cat /etc/alpine-release")"
 check "apk architecture is ${ALPINE_ARCH}" "${ALPINE_ARCH}" "$(run "" "apk --print-arch")"
 check "busybox is built for ${ALPINE_ARCH}" "${ELF_MACHINE}" "$(run "" "od -An -tu2 -j18 -N2 /bin/busybox" | xargs)"
 check "runtime packages are installed" "bash ca-certificates coreutils shadow tzdata" \
