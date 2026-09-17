@@ -28,7 +28,7 @@ if [[ "${BUILDKITE_LABEL}" =~ ^:docker:\ Build\ and\ Deploy ]] && master; then
   # Branch and pull request tags all end in -<alpine version>. Version, latest, BK and the old Jenkins numeric tags don't.
   echo "--- :docker: Removing tags for deleted branches"
   dockerbranchtags=$(grep -E -- '-[0-9]+\.[0-9]+$' <<< "${dockertags}" | grep -vE '^(PR[0-9]+|BK[0-9]+)-')
-  githubbranches=$(curl -fs --retry 3 "https://api.github.com/repos/${GITHUB_REPOSITORY}/branches?per_page=100" | jq -r '.[].name' | sed -E 's|^renovate/.*|renovate|' | while read -r branch; do sanitize_tag "${branch}"; done)
+  githubbranches=$(curl -fs --retry 3 "https://api.github.com/repos/${GITHUB_REPOSITORY}/branches?per_page=100" | jq -r '.[].name' | sed -E 's|^renovate-.*|renovate|' | while read -r branch; do sanitize_tag "${branch}"; done)
   cleanup_tags "${dockerbranchtags}" "${githubbranches}"
 
   echo "--- :docker: Removing tags for merged or closed pull requests"
